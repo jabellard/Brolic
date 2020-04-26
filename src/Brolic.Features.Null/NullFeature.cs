@@ -1,6 +1,5 @@
 using Brolic.Abstractions;
 using Brolic.Features.Null.Abstractions;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Brolic.Features.Null
@@ -13,9 +12,9 @@ namespace Brolic.Features.Null
             services.AddSingleton<INullResponseWriter, NullResponseWriter>();
         }
 
-        public void Configure(IApplicationBuilder applicationBuilder)
+        public void Configure(IBrolicApplicationConfigurator brolicApplicationConfigurator)
         {
-            var trafficHandlerRegistrar = applicationBuilder
+            var trafficHandlerRegistrar = brolicApplicationConfigurator
                 .ApplicationServices
                 .GetRequiredService<ITrafficHandlerRegistrar>();
             

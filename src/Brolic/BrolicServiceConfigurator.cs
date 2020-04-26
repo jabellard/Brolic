@@ -13,7 +13,8 @@ namespace Brolic
             Services = services;
         }
         
-        public IBrolicServiceConfigurator WithFeature<TFeature>() where TFeature : IFeature
+        public IBrolicServiceConfigurator WithFeature<TFeature>()
+            where TFeature : IFeature
         {
             var feature = Activator.CreateInstance(typeof(TFeature)) as IFeature;
             feature.ConfigureServices(Services);
@@ -23,7 +24,7 @@ namespace Brolic
 
         internal void Configure()
         {
-            
+            //TODO: Add services
         }
     }
 }

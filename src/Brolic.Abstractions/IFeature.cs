@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Brolic.Abstractions
@@ -7,6 +6,6 @@ namespace Brolic.Abstractions
     {
         string Key { get;}
         void ConfigureServices(IServiceCollection services);
-        void Configure(IApplicationBuilder applicationBuilder);
+        void Configure(IBrolicApplicationConfigurator brolicApplicationConfigurator);
     }
 }
