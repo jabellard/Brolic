@@ -2,6 +2,6 @@ namespace Brolic.Abstractions
 {
     public static class PipelineComponents
     {
-        public static string Main = "Main";
+        public const string Main = "Main";
     }
 }
