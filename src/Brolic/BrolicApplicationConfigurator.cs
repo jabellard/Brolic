@@ -15,9 +15,31 @@ namespace Brolic
             Configuration = new BrolicApplicationConfiguration();
         }
         
+        public IBrolicApplicationConfigurator WithMiddleware(string key,
+            Func<BrolicTrafficDelegate, BrolicTrafficDelegate> middleware)
+        {
+            Configuration.MiddlewareRegistrations.Add(key, new MiddlewareRegistration
+            {
+                Middleware = middleware,
+                MiddlewareType = MiddlewareType.Delegate
+            });
+            return this;
+        }
+
+        public IBrolicApplicationConfigurator WithMiddleware<TBrolicMiddleware>(string key)
+            where TBrolicMiddleware : IBrolicMiddleware
+        {
+            Configuration.MiddlewareRegistrations.Add(key, new MiddlewareRegistration
+            {
+                Middleware = typeof(TBrolicMiddleware),
+                MiddlewareType = MiddlewareType.Class
+            });
+            return this;
+        }
+        
         public IBrolicApplicationConfiguration Configure()
         {
-            throw new NotImplementedException();
+            return Configuration;
         }
     }
 }

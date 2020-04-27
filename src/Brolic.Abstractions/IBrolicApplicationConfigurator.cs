@@ -7,6 +7,12 @@ namespace Brolic.Abstractions
         IServiceProvider ApplicationServices { get;}
         IBrolicApplicationConfiguration Configuration { get; }
 
+        IBrolicApplicationConfigurator WithMiddleware(string key,
+            Func<BrolicTrafficDelegate, BrolicTrafficDelegate> middleware);
+
+        IBrolicApplicationConfigurator WithMiddleware<TBrolicMiddleware>(string key)
+            where TBrolicMiddleware : IBrolicMiddleware;
+
         IBrolicApplicationConfiguration Configure();
     }
 }

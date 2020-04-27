@@ -19,7 +19,7 @@ namespace Brolic.Extensions
             foreach (var feature in features)
                 feature.Configure(brolicApplicationConfigurator);
             
-            var brolicApplicationBuilder = new BrolicApplicationBuilder();
+            var brolicApplicationBuilder = new BrolicApplicationBuilder(applicationBuilder.ApplicationServices);
             var brolicApplicationConfiguration = brolicApplicationConfigurator.Configure();
             var trafficDelegate = brolicApplicationBuilder
                 .ConfigurePipeline(brolicApplicationConfiguration)
