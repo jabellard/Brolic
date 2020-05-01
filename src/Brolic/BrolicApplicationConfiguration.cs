@@ -9,17 +9,7 @@ namespace Brolic
 
         public BrolicApplicationConfiguration()
         {
-            MiddlewareRegistrations = new Dictionary<string, MiddlewareRegistration>
-            {
-                {
-                    PipelineComponents.Main,
-                    new MiddlewareRegistration
-                    {
-                        Middleware = typeof(MainBrolicMiddleware),
-                        MiddlewareType = MiddlewareType.Delegate
-                    }
-                }
-            };
+            MiddlewareRegistrations = new Dictionary<string, MiddlewareRegistration>();
         }
     }
 }

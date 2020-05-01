@@ -24,18 +24,18 @@ namespace Brolic
             return this;
         }
 
-        public IBrolicApplicationBuilder UseMiddleware<TBrolicMiddleware>()
+        public IBrolicApplicationBuilder UseMiddleware<TBrolicMiddleware>(params object[] parameters)
             where TBrolicMiddleware : IBrolicMiddleware
         {
-            return UseMiddleware(typeof(TBrolicMiddleware));
+            return UseMiddleware(typeof(TBrolicMiddleware), parameters);
         }
         
-        public IBrolicApplicationBuilder UseMiddleware(Type middlewareType)
+        public IBrolicApplicationBuilder UseMiddleware(Type middlewareType, params object[] parameters)
         {
             return Use(next =>
             {
                 var brolicMiddlewareProvider = ApplicationServices.GetService<IBrolicMiddlewareProvider>();
-                var brolicMiddleware = brolicMiddlewareProvider.GetMiddleware(middlewareType);
+                var brolicMiddleware = brolicMiddlewareProvider.GetMiddleware(middlewareType, parameters);
                 return async trafficContext => await brolicMiddleware.Invoke(trafficContext, next);
             });
         }

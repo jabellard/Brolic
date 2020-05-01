@@ -4,6 +4,6 @@ namespace Brolic.Abstractions
 {
     public interface IBrolicMiddlewareProvider
     {
-        IBrolicMiddleware GetMiddleware(Type middlewareType);
+        IBrolicMiddleware GetMiddleware(Type middlewareType, params object[] parameters);
     }
 }

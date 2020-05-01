@@ -1,5 +1,6 @@
 using System;
 using Brolic.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Brolic
 {
@@ -11,9 +12,9 @@ namespace Brolic
         {
             _serviceProvider = serviceProvider;
         }
-        public IBrolicMiddleware GetMiddleware(Type middlewareType)
+        public IBrolicMiddleware GetMiddleware(Type middlewareType, params object[] parameters)
         {
-            return _serviceProvider.GetService(middlewareType) as IBrolicMiddleware;
+            return ActivatorUtilities.CreateInstance(_serviceProvider, middlewareType, parameters) as IBrolicMiddleware;
         }
     }
 }

@@ -6,10 +6,10 @@ namespace Brolic.Abstractions
     {
         IBrolicApplicationBuilder Use(Func<BrolicTrafficDelegate, BrolicTrafficDelegate> middleware);
 
-        IBrolicApplicationBuilder UseMiddleware<TBrolicMiddleware>()
+        IBrolicApplicationBuilder UseMiddleware<TBrolicMiddleware>(params object[] parameters)
             where TBrolicMiddleware : IBrolicMiddleware;
 
-        IBrolicApplicationBuilder UseMiddleware(Type middlewareType);
+        IBrolicApplicationBuilder UseMiddleware(Type middlewareType, params object[] parameters);
         BrolicTrafficDelegate Build();
     }
 }

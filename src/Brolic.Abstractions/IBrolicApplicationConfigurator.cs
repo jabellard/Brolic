@@ -10,7 +10,7 @@ namespace Brolic.Abstractions
         IBrolicApplicationConfigurator WithMiddleware(string key,
             Func<BrolicTrafficDelegate, BrolicTrafficDelegate> middleware);
 
-        IBrolicApplicationConfigurator WithMiddleware<TBrolicMiddleware>(string key)
+        IBrolicApplicationConfigurator WithMiddleware<TBrolicMiddleware>(string key, params object[] parameters)
             where TBrolicMiddleware : IBrolicMiddleware;
 
         IBrolicApplicationConfiguration Configure();

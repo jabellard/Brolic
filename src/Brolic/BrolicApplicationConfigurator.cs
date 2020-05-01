@@ -21,18 +21,19 @@ namespace Brolic
             Configuration.MiddlewareRegistrations.Add(key, new MiddlewareRegistration
             {
                 Middleware = middleware,
-                MiddlewareType = MiddlewareType.Delegate
+                Type = MiddlewareType.Delegate
             });
             return this;
         }
 
-        public IBrolicApplicationConfigurator WithMiddleware<TBrolicMiddleware>(string key)
+        public IBrolicApplicationConfigurator WithMiddleware<TBrolicMiddleware>(string key, params object[] parameters)
             where TBrolicMiddleware : IBrolicMiddleware
         {
             Configuration.MiddlewareRegistrations.Add(key, new MiddlewareRegistration
             {
                 Middleware = typeof(TBrolicMiddleware),
-                MiddlewareType = MiddlewareType.Class
+                Type = MiddlewareType.Class,
+                Parameters = parameters
             });
             return this;
         }
