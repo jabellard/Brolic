@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Brolic.Abstractions;
 
@@ -9,61 +10,35 @@ namespace Brolic.Extensions
         public static IBrolicApplicationBuilder ConfigurePipeline(this IBrolicApplicationBuilder brolicApplicationBuilder, IBrolicApplicationConfiguration brolicApplicationConfiguration)
         {
             var middlewareRegistrations = brolicApplicationConfiguration.MiddlewareRegistrations;
+            brolicApplicationBuilder
+                .UseRegistrationSection(middlewareRegistrations,PipelineComponents.TrafficRouting)
+                .UseRegistrationSection(middlewareRegistrations,PipelineComponents.DownstreamMatching)
+                .UseRegistrationSection(middlewareRegistrations,PipelineComponents.TrafficDispatching);
 
-            var preTrafficRoutingMiddlewareRegistrations = middlewareRegistrations
-                .Where(r => r.Key.Contains($"Pre{PipelineComponents.TrafficRouting}/"))
+            return brolicApplicationBuilder;
+        }
+        
+        private static IBrolicApplicationBuilder UseRegistrationSection(
+            this IBrolicApplicationBuilder brolicApplicationBuilder, IDictionary<string, MiddlewareRegistration> middlewareRegistrations, string sectionKey)
+        {
+            var preMiddlewareRegistrations = middlewareRegistrations
+                .Where(r => r.Key.Contains($"Pre{sectionKey}/"))
                 .Select(r => r.Value);
-            foreach (var preTrafficRoutingMiddlewareRegistration in preTrafficRoutingMiddlewareRegistrations)
+            foreach (var preMiddlewareRegistration in preMiddlewareRegistrations)
             {
-                brolicApplicationBuilder.UseRegistration(preTrafficRoutingMiddlewareRegistration);
+                brolicApplicationBuilder.UseRegistration(preMiddlewareRegistration);
             }
             
-            brolicApplicationBuilder.UseRegistration(middlewareRegistrations[PipelineComponents.TrafficRouting]);
+            brolicApplicationBuilder.UseRegistration(middlewareRegistrations[sectionKey]);
             
-            var postTrafficRoutingMiddlewareRegistrations = middlewareRegistrations
-                .Where(r => r.Key.Contains($"Post{PipelineComponents.TrafficRouting}/"))
+            var postMiddlewareRegistrations = middlewareRegistrations
+                .Where(r => r.Key.Contains($"Post{sectionKey}/"))
                 .Select(r => r.Value);
-            foreach (var postTrafficRoutingMiddlewareRegistration in postTrafficRoutingMiddlewareRegistrations)
+            foreach (var postMiddlewareRegistration in postMiddlewareRegistrations)
             {
-                brolicApplicationBuilder.UseRegistration(postTrafficRoutingMiddlewareRegistration);
+                brolicApplicationBuilder.UseRegistration(postMiddlewareRegistration);
             }
-            
-            var preDownstreamMatchingMiddlewareRegistrations = middlewareRegistrations
-                .Where(r => r.Key.Contains($"Pre{PipelineComponents.DownstreamMatching}/"))
-                .Select(r => r.Value);
-            foreach (var preDownstreamMatchingMiddlewareRegistration in preDownstreamMatchingMiddlewareRegistrations)
-            {
-                brolicApplicationBuilder.UseRegistration(preDownstreamMatchingMiddlewareRegistration);
-            }
-            
-            brolicApplicationBuilder.UseRegistration(middlewareRegistrations[PipelineComponents.DownstreamMatching]);
-            
-            var postDownstreamMatchingMiddlewareRegistrations = middlewareRegistrations
-                .Where(r => r.Key.Contains($"Post{PipelineComponents.DownstreamMatching}/"))
-                .Select(r => r.Value);
-            foreach (var postDownstreamMatchingMiddlewareRegistration in postDownstreamMatchingMiddlewareRegistrations)
-            {
-                brolicApplicationBuilder.UseRegistration(postDownstreamMatchingMiddlewareRegistration);
-            }
-            
-            var preTrafficDispatchingMiddlewareRegistrations = middlewareRegistrations
-                .Where(r => r.Key.Contains($"Pre{PipelineComponents.TrafficDispatching}/"))
-                .Select(r => r.Value);
-            foreach (var preTrafficDispatchingMiddlewareRegistration in preTrafficDispatchingMiddlewareRegistrations)
-            {
-                brolicApplicationBuilder.UseRegistration(preTrafficDispatchingMiddlewareRegistration);
-            }
-            
-            brolicApplicationBuilder.UseRegistration(middlewareRegistrations[PipelineComponents.TrafficDispatching]);
-            
-            var postTrafficDispatchingMiddlewareRegistrations = middlewareRegistrations
-                .Where(r => r.Key.Contains($"Post{PipelineComponents.TrafficDispatching}/"))
-                .Select(r => r.Value);
-            foreach (var postTrafficDispatchingMiddlewareRegistration in postTrafficDispatchingMiddlewareRegistrations)
-            {
-                brolicApplicationBuilder.UseRegistration(postTrafficDispatchingMiddlewareRegistration);
-            }
-            
+
             return brolicApplicationBuilder;
         }
 
