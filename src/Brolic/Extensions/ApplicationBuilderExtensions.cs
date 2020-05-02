@@ -19,8 +19,10 @@ namespace Brolic.Extensions
             var routeBuilder = new RouteBuilder(applicationBuilder);
             routeBuilderConfiguration(routeBuilder);
             var router = routeBuilder.Build();
-            brolicApplicationConfigurator.WithMiddleware<TrafficRoutingMiddleware>(PipelineComponents.TrafficRouting, router);
-            brolicApplicationConfigurator.WithMiddleware<TrafficDispatchingMiddleware>(PipelineComponents.TrafficDispatching);
+            brolicApplicationConfigurator
+                .WithMiddleware<TrafficRoutingMiddleware>(PipelineComponents.TrafficRouting, router)
+                .WithMiddleware<DownstreamMatchingMiddleware>(PipelineComponents.DownstreamMatching)
+                .WithMiddleware<TrafficDispatchingMiddleware>(PipelineComponents.TrafficDispatching);
 
 
             var features = applicationBuilder
