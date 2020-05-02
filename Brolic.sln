@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Brolic.Abstractions", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Brolic.Features.Null", "src\Brolic.Features.Null\Brolic.Features.Null.csproj", "{2DB3439B-D9BC-43F7-8513-7BA9F045EB78}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Brolic.Features.Http", "src\Brolic.Features.Http\Brolic.Features.Http.csproj", "{8DC0788D-C8DF-4600-AF01-186CB1E8077C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{2DB3439B-D9BC-43F7-8513-7BA9F045EB78}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2DB3439B-D9BC-43F7-8513-7BA9F045EB78}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2DB3439B-D9BC-43F7-8513-7BA9F045EB78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DC0788D-C8DF-4600-AF01-186CB1E8077C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DC0788D-C8DF-4600-AF01-186CB1E8077C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DC0788D-C8DF-4600-AF01-186CB1E8077C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DC0788D-C8DF-4600-AF01-186CB1E8077C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

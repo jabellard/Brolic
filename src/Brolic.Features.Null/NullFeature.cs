@@ -10,6 +10,7 @@ namespace Brolic.Features.Null
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<INullResponseWriter, NullResponseWriter>();
+            services.AddSingleton<NullTrafficHandler>();
         }
 
         public void Configure(IBrolicApplicationConfigurator brolicApplicationConfigurator)

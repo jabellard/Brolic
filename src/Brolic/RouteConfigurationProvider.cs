@@ -24,7 +24,7 @@ namespace Brolic
                     var pathTemplate = route.PathTemplate;
                     if (pathTemplate.Last() != '/')
                         pathTemplate += "/";
-                    pathTemplate += "{*url}";
+                    pathTemplate += "{*downstreamUriSegment}";
                     
                     var downstream = _brolicOptions.Downstreams[route.Downstream];
                     routeBuilder.MapRoute(pathTemplate, httpContext =>
