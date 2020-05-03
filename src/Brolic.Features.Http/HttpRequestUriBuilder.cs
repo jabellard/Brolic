@@ -12,8 +12,8 @@ namespace Brolic.Features.Http
         public Task<Uri> BuildHttpRequestUri(ITrafficContext trafficContext)
         {
             var httpRequest = trafficContext.HttpContext.Request;
-            var httpOptions = trafficContext.Downstream.GetHttpOptions();
-            var downstreamUri = httpOptions.BaseUri;
+            var httpDownstreamOptions = trafficContext.Downstream.GetHttpDownstreamOptions();
+            var downstreamUri = httpDownstreamOptions.BaseUri;
             if (downstreamUri.Last() != '/')
                 downstreamUri += "/";
             var downstreamUriSegment = httpRequest

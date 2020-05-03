@@ -21,7 +21,6 @@ namespace Brolic.Features.Http
             var trafficHandlerRegistrar = brolicApplicationConfigurator
                 .ApplicationServices
                 .GetRequiredService<ITrafficHandlerRegistrar>();
-            
             trafficHandlerRegistrar.RegisterTrafficHandler<HttpTrafficHandler>(Key);
         }
     }

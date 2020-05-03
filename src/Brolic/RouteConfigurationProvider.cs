@@ -24,14 +24,22 @@ namespace Brolic
                     var pathTemplate = route.PathTemplate;
                     if (pathTemplate.Last() != '/')
                         pathTemplate += "/";
-                    pathTemplate += "{*downstreamUriSegment}";
+                    pathTemplate += "{*downstreamUriSegment}"; //TODO: consider having this as route.PathParameters = List<string>
                     
                     var downstream = _brolicOptions.Downstreams[route.Downstream];
-                    routeBuilder.MapRoute(pathTemplate, httpContext =>
-                    {
-                        httpContext.Items.Add("Downstream", downstream);
-                        return Task.CompletedTask;
-                    });
+                    if (route.Methods.Any())
+                        foreach (var method in route.Methods)
+                            routeBuilder.MapVerb(method, pathTemplate, httpContext =>
+                            {
+                                httpContext.Items.Add("Downstream", downstream);
+                                return Task.CompletedTask;
+                            });
+                    else
+                        routeBuilder.MapRoute(pathTemplate, httpContext =>
+                        {
+                            httpContext.Items.Add("Downstream", downstream);
+                            return Task.CompletedTask;
+                        });
                 }
             };
         }

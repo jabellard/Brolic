@@ -18,7 +18,6 @@ namespace Brolic.Features.Null
             var trafficHandlerRegistrar = brolicApplicationConfigurator
                 .ApplicationServices
                 .GetRequiredService<ITrafficHandlerRegistrar>();
-            
             trafficHandlerRegistrar.RegisterTrafficHandler<NullTrafficHandler>(Key);
         }
     }

@@ -5,9 +5,9 @@ namespace Brolic.Features.Http.Extensions
 {
     public static class DownStreamExtensions
     {
-        public static HttpOptions GetHttpOptions(this Downstream downstream)
+        public static HttpDownstreamOptions GetHttpDownstreamOptions(this Downstream downstream)
         {
-            return downstream.Configuration as HttpOptions;
+            return downstream.Data["Options"] as HttpDownstreamOptions;
         }
     }
 }
