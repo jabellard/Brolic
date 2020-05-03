@@ -19,8 +19,10 @@ namespace Brolic.Features.RabbitMQ
         
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IRabbitMqConnectionProvider, RabbitMqConnectionProvider>();
+            services.AddSingleton<IRabbitMqRequestBuilder, RabbitMqRequestBuilder>();
+            services.AddSingleton<IRabbitMqRequestExecutor, RabbitMqRequestExecutor>();
             var rabbitMqOptions = _featureOptionsProvider.GetFeatureOptions<RabbitMqOptions>(Key);
-
             foreach (var keyedConnection in rabbitMqOptions.KeyedConnections)
             {
                 var connectionFactory = new ConnectionFactory
@@ -53,7 +55,6 @@ namespace Brolic.Features.RabbitMQ
             {
                 var keyedRabbitMqConnections = applicationServices
                     .GetServices<IKeyedRabbitMqConnection>();
-
                 foreach (var keyedRabbitMqConnection in keyedRabbitMqConnections)
                     keyedRabbitMqConnection.Connection.Close();
             });

@@ -40,9 +40,18 @@ namespace Brolic
 
         internal void Configure()
         {
-            //TODO: Add services
+            Services.AddOptions();
+            Services.AddLogging();
+            Services.AddRouting();
+            Services.AddSingleton<IBrolicMiddlewareProvider, BrolicMiddlewareProvider>();
+            Services.Configure<BrolicOptions>(options => { });
+            Services.AddSingleton<IFeatureOptionsProvider, FeatureOptionsProvider>();
+            Services.AddSingleton<IRouteConfigurationProvider, RouteConfigurationProvider>();
+            Services.AddSingleton<ITrafficHandlerRegistrar, TrafficHandlerRegistrar>();
+            Services.AddSingleton<ITrafficHandlerProvider, TrafficHandlerProvider>();
+            
             if ( _lazyServiceProvider.IsValueCreated)
-                ServiceProvider.Dispose();
+                _lazyServiceProvider.Value.Dispose();
             
         }
     }
