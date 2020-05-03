@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Brolic.Abstractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,12 +10,14 @@ namespace Brolic
     {
         public IServiceCollection Services { get; }
         private readonly Lazy<ServiceProvider> _lazyServiceProvider;
+        private readonly Dictionary<string, Type> _featureTypes;
         private ServiceProvider ServiceProvider => _lazyServiceProvider.Value;
 
         public BrolicServiceConfigurator(IServiceCollection services)
         {
             Services = services;
             _lazyServiceProvider = new Lazy<ServiceProvider>(services.BuildServiceProvider);
+            _featureTypes = new Dictionary<string, Type>();
         }
         
         public IBrolicServiceConfigurator WithOptions(IConfigurationSection configuration)
@@ -32,9 +35,8 @@ namespace Brolic
         public IBrolicServiceConfigurator WithFeature<TFeature>()
             where TFeature : IFeature
         {
-            var feature = ActivatorUtilities.CreateInstance(ServiceProvider, typeof(TFeature)) as IFeature;
-            feature.ConfigureServices(Services);
-            Services.AddSingleton(feature);
+            var featureType = typeof(TFeature);
+            _featureTypes.Add(featureType.FullName, featureType);
             return this;
         }
 
@@ -49,6 +51,13 @@ namespace Brolic
             Services.AddSingleton<IRouteConfigurationProvider, RouteConfigurationProvider>();
             Services.AddSingleton<ITrafficHandlerRegistrar, TrafficHandlerRegistrar>();
             Services.AddSingleton<ITrafficHandlerProvider, TrafficHandlerProvider>();
+
+            foreach (var (key, value) in _featureTypes)
+            {
+                var featureInstance = ActivatorUtilities.CreateInstance(ServiceProvider, value) as IFeature;
+                featureInstance.ConfigureServices(Services);
+                Services.AddSingleton(featureInstance);
+            }
             
             if ( _lazyServiceProvider.IsValueCreated)
                 _lazyServiceProvider.Value.Dispose();
