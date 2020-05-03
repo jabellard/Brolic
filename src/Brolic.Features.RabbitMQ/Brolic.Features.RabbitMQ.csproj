@@ -5,7 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\src\Brolic.Abstractions\Brolic.Abstractions.csproj" />
+        <ProjectReference Include="..\Brolic.Abstractions\Brolic.Abstractions.csproj" />
     </ItemGroup>
 
     <ItemGroup>
