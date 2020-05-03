@@ -34,7 +34,7 @@ namespace Brolic.Features.RabbitMQ
                 var keyedRabbitMqConnection = new KeyedRabbitMqConnection(keyedConnection.Key, connection);
                 services.AddSingleton<IKeyedRabbitMqConnection>(sp => keyedRabbitMqConnection);
 
-                var channel = connection.CreateModel();
+                using var channel = connection.CreateModel();
 
                 foreach (var exchange in keyedConnection.Exchanges)
                     channel.ExchangeDeclare(exchange.Key, exchange.Type, exchange.Durable, exchange.AutoDelete,
