@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Brolic.Abstractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,14 +11,14 @@ namespace Brolic
     {
         public IServiceCollection Services { get; }
         private readonly Lazy<ServiceProvider> _lazyServiceProvider;
-        private readonly Dictionary<string, Type> _featureTypes;
+        private readonly Dictionary<string, Type> _keyedFeatureTypes;
         private ServiceProvider ServiceProvider => _lazyServiceProvider.Value;
 
         public BrolicServiceConfigurator(IServiceCollection services)
         {
             Services = services;
             _lazyServiceProvider = new Lazy<ServiceProvider>(services.BuildServiceProvider);
-            _featureTypes = new Dictionary<string, Type>();
+            _keyedFeatureTypes = new Dictionary<string, Type>();
         }
         
         public IBrolicServiceConfigurator WithOptions(IConfigurationSection configuration)
@@ -36,7 +37,7 @@ namespace Brolic
             where TFeature : IFeature
         {
             var featureType = typeof(TFeature);
-            _featureTypes.Add(featureType.FullName, featureType);
+            _keyedFeatureTypes.Add(featureType.FullName, featureType);
             return this;
         }
 
@@ -52,12 +53,16 @@ namespace Brolic
             Services.AddSingleton<ITrafficHandlerRegistrar, TrafficHandlerRegistrar>();
             Services.AddSingleton<ITrafficHandlerProvider, TrafficHandlerProvider>();
 
-            foreach (var (key, value) in _featureTypes)
-            {
-                var featureInstance = ActivatorUtilities.CreateInstance(ServiceProvider, value) as IFeature;
-                featureInstance.ConfigureServices(Services);
-                Services.AddSingleton(featureInstance);
-            }
+            var featureInstances = _keyedFeatureTypes
+                .Select(kt => ActivatorUtilities.CreateInstance(ServiceProvider, kt.Value) as IFeature)
+                .ToList();
+            
+            featureInstances
+                .ForEach(fi =>
+                {
+                    fi.ConfigureServices(Services);
+                    Services.AddSingleton(fi);
+                });
             
             if ( _lazyServiceProvider.IsValueCreated)
                 _lazyServiceProvider.Value.Dispose();
