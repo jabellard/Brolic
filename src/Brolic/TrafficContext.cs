@@ -6,7 +6,8 @@ namespace Brolic
     public class TrafficContext: ITrafficContext
     {
         public HttpContext HttpContext { get; }
-        public Downstream Downstream => HttpContext.Items["Downstream"] as Downstream;
+        public BrolicRoute Route => HttpContext.Items[ObjectKeys.HttpContextRouteObject] as BrolicRoute;
+        public Downstream Downstream => HttpContext.Items[ObjectKeys.HttpContextDownstreamObject] as Downstream;
 
         public TrafficContext(HttpContext httpContext)
         {

@@ -21,22 +21,33 @@ namespace Brolic
             {
                 foreach (var route in _brolicOptions.Routes)
                 {
-                    var pathTemplate = route.PathTemplate;
+                    var pathTemplate = route.BasePath;
                     if (pathTemplate.Last() != '/')
                         pathTemplate += "/";
-                    pathTemplate += "{*downstreamUriSegment}"; //TODO: consider having this as route.PathParameters = List<string>
-                    
+                    if (route.CatchAll)
+                        pathTemplate += "{*catchAllPathSegment}";
+                    else if (route.PathSegments.Any())
+                        pathTemplate = route.PathSegments.Aggregate(pathTemplate, (current, pathSegment) =>
+                        {
+                            if (current.Last() != '/')
+                                current += "/";
+                            current += "{*" + pathSegment + "}";
+                            return current;
+                        });
+
                     var downstream = _brolicOptions.Downstreams[route.Downstream];
                     if (route.Methods.Any())
                         foreach (var method in route.Methods)
                             routeBuilder.MapVerb(method, pathTemplate, httpContext =>
                             {
-                                httpContext.Items.Add("Downstream", downstream);
+                                httpContext.Items.Add(ObjectKeys.HttpContextRouteObject, route);
+                                httpContext.Items.Add(ObjectKeys.HttpContextDownstreamObject, downstream);
                                 return Task.CompletedTask;
                             });
                     else
                         routeBuilder.MapRoute(pathTemplate, httpContext =>
                         {
+                            httpContext.Items.Add("Route", route);
                             httpContext.Items.Add("Downstream", downstream);
                             return Task.CompletedTask;
                         });

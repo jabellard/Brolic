@@ -2,6 +2,6 @@ namespace Brolic.Features.Http.Options
 {
     public class HttpDownstreamOptions
     {
-        public string BaseUri { get; set; }
+        public string BasePath { get; set; }
     }
 }

@@ -11,19 +11,35 @@ namespace Brolic.Features.Http
     {
         public Task<Uri> BuildHttpRequestUri(ITrafficContext trafficContext)
         {
-            var httpRequest = trafficContext.HttpContext.Request;
             var httpDownstreamOptions = trafficContext.Downstream.GetHttpDownstreamOptions();
-            var downstreamUri = httpDownstreamOptions.BaseUri;
-            if (downstreamUri.Last() != '/')
-                downstreamUri += "/";
-            var downstreamUriSegment = httpRequest
-                .RouteValues
-                .First(rv => rv.Key == "downstreamUriSegment")
-                .Value;
-            downstreamUri += downstreamUriSegment;
+            var downstreamPath = httpDownstreamOptions.BasePath;
+            if (downstreamPath.Last() != '/')
+                downstreamPath += "/";
+            var httpRequest = trafficContext.HttpContext.Request;
+            var route = trafficContext.Route;
+            if (route.CatchAll)
+            {
+                var catchAllPathSegment = httpRequest
+                    .RouteValues
+                    .First(rv => rv.Key == "catchAllPathSegment")
+                    .Value;
+                downstreamPath += catchAllPathSegment;
+            }
+            else if (route.PathSegments.Any())
+                downstreamPath = route.PathSegments.Aggregate(downstreamPath, (current, pathSegment) =>
+                {
+                    if (current.Last() != '/')
+                        current += "/";
+                    var pathSegmentValue = httpRequest
+                        .RouteValues
+                        .First(rv => rv.Key == pathSegment)
+                        .Value;
+                    current += pathSegmentValue;
+                    return current;
+                });
             var queryString = httpRequest.QueryString.Value;
-            downstreamUri += queryString;
-            return Task.FromResult(new Uri(downstreamUri));
+            downstreamPath += queryString;
+            return Task.FromResult(new Uri(downstreamPath));
         }
     }
 }
