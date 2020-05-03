@@ -41,7 +41,9 @@ namespace Brolic
         internal void Configure()
         {
             //TODO: Add services
-            ServiceProvider.Dispose();
+            if ( _lazyServiceProvider.IsValueCreated)
+                ServiceProvider.Dispose();
+            
         }
     }
 }
