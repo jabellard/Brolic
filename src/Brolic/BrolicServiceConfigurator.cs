@@ -11,14 +11,14 @@ namespace Brolic
     {
         public IServiceCollection Services { get; }
         private readonly Lazy<ServiceProvider> _lazyServiceProvider;
-        private readonly Dictionary<string, Type> _keyedFeatureTypes;
+        private readonly Dictionary<string, Tuple<Type, DateTime>> _keyedFeatureTypeRegistrations;
         private ServiceProvider ServiceProvider => _lazyServiceProvider.Value;
 
         public BrolicServiceConfigurator(IServiceCollection services)
         {
             Services = services;
             _lazyServiceProvider = new Lazy<ServiceProvider>(services.BuildServiceProvider);
-            _keyedFeatureTypes = new Dictionary<string, Type>();
+            _keyedFeatureTypeRegistrations = new Dictionary<string, Tuple<Type, DateTime>>();
         }
         
         public IBrolicServiceConfigurator WithOptions(IConfigurationSection configuration)
@@ -37,7 +37,7 @@ namespace Brolic
             where TFeature : IFeature
         {
             var featureType = typeof(TFeature);
-            _keyedFeatureTypes.Add(featureType.FullName, featureType);
+            _keyedFeatureTypeRegistrations.Add(featureType.FullName, new Tuple<Type, DateTime>(featureType, DateTime.UtcNow));
             return this;
         }
 
@@ -52,16 +52,22 @@ namespace Brolic
             Services.AddSingleton<IRouteConfigurationProvider, RouteConfigurationProvider>();
             Services.AddSingleton<ITrafficHandlerRegistrar, TrafficHandlerRegistrar>();
             Services.AddSingleton<ITrafficHandlerProvider, TrafficHandlerProvider>();
+            Services.AddSingleton<IFeatureRegistration, FeatureRegistration>();
+            Services.AddSingleton<IFeatureProvider, FeatureProvider>();
 
-            var featureInstances = _keyedFeatureTypes
-                .Select(kt => ActivatorUtilities.CreateInstance(ServiceProvider, kt.Value) as IFeature)
+            var featureRegistrations = _keyedFeatureTypeRegistrations
+                .Select(ktr => new FeatureRegistration
+                {
+                    Feature = ActivatorUtilities.CreateInstance(ServiceProvider, ktr.Value.Item1) as IFeature,
+                    Timestamp = ktr.Value.Item2
+                })
                 .ToList();
             
-            featureInstances
-                .ForEach(fi =>
+            featureRegistrations
+                .ForEach(fr =>
                 {
-                    fi.ConfigureServices(Services);
-                    Services.AddSingleton(fi);
+                    fr.Feature.ConfigureServices(Services);
+                    Services.AddSingleton<IFeatureRegistration>(fr);
                 });
             
             if ( _lazyServiceProvider.IsValueCreated)

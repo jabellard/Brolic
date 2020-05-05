@@ -23,6 +23,7 @@ namespace Brolic.Extensions
         {
             var preMiddlewareRegistrations = middlewareRegistrations
                 .Where(r => r.Key.Contains($"Pre{sectionKey}/"))
+                .OrderBy(r => r.Value.Timestamp)
                 .Select(r => r.Value);
             foreach (var preMiddlewareRegistration in preMiddlewareRegistrations)
             {
@@ -33,6 +34,7 @@ namespace Brolic.Extensions
             
             var postMiddlewareRegistrations = middlewareRegistrations
                 .Where(r => r.Key.Contains($"Post{sectionKey}/"))
+                .OrderBy(r => r.Value.Timestamp)
                 .Select(r => r.Value);
             foreach (var postMiddlewareRegistration in postMiddlewareRegistrations)
             {

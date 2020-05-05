@@ -24,10 +24,11 @@ namespace Brolic.Extensions
                 .WithMiddleware<DownstreamMatchingMiddleware>(PipelineComponents.DownstreamMatching)
                 .WithMiddleware<TrafficDispatchingMiddleware>(PipelineComponents.TrafficDispatching);
 
-
-            var features = applicationBuilder
+            var featureProvider = applicationBuilder
                 .ApplicationServices
-                .GetServices<IFeature>();
+                .GetRequiredService<IFeatureProvider>();
+            var features = featureProvider
+                .GetFeatures();
             foreach (var feature in features)
                 feature.Configure(brolicApplicationConfigurator);
 
