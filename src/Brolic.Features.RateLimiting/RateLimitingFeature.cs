@@ -10,7 +10,9 @@ namespace Brolic.Features.RateLimiting
         public string Key => "RateLimiting";
         public void ConfigureServices(IServiceCollection services)
         {
-            services.TryAddSingleton<IRateLimitingValidator, TokenBucketRateLimitingValidator>();
+            services.TryAddSingleton<IRateLimitingCounterKeyBuilder, Sha1RateLimitingCounterKeyBuilder>();
+            services.TryAddSingleton<IRateLimitingCounterStore, MemoryCacheRateLimitingCounterStore>();
+            services.TryAddSingleton<IRateLimitingValidationStrategy, TokenBucketRateLimitingValidationStrategy>();
             services.TryAddSingleton<ITrafficInitiatorIdentifier, IpTrafficInitiatorIdentifier>();
         }
 

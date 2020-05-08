@@ -11,18 +11,18 @@ namespace Brolic.Features.RateLimiting
     public class RateLimitingMiddleware: IBrolicMiddleware
     {
         private readonly ITrafficInitiatorIdentifier _trafficInitiatorIdentifier;
-        private readonly IRateLimitingValidator _rateLimitingValidator;
+        private readonly IRateLimitingValidationStrategy _rateLimitingValidationStrategy;
 
         public RateLimitingMiddleware(ITrafficInitiatorIdentifier trafficInitiatorIdentifier,
-            IRateLimitingValidator rateLimitingValidator)
+            IRateLimitingValidationStrategy rateLimitingValidationStrategy)
         {
             _trafficInitiatorIdentifier = trafficInitiatorIdentifier;
-            _rateLimitingValidator = rateLimitingValidator;
+            _rateLimitingValidationStrategy = rateLimitingValidationStrategy;
         }
         
         public async Task Invoke(ITrafficContext trafficContext, BrolicTrafficDelegate next)
         {
-            var trafficInitiator = await _trafficInitiatorIdentifier.IdentifyTrafficInitiator(trafficContext);
+            var trafficInitiatorId = await _trafficInitiatorIdentifier.IdentifyTrafficInitiator(trafficContext);
             var httpContext = trafficContext.HttpContext;
             var httpMethod = httpContext.Request.Method;
             var rateLimitingRouteOptions = trafficContext.Route.GetRateLimitingRouteOptions();
@@ -43,13 +43,13 @@ namespace Brolic.Features.RateLimiting
 
                 var rateLimitingValidationContext = new RateLimitingValidationContext
                 {
-                    TrafficInitiator = trafficInitiator,
+                    TrafficInitiatorId = trafficInitiatorId,
                     Path = path,
                     Method = parsedMethod,
                     Limit = applicableRateLimitingRule.Limit,
                     Period = applicableRateLimitingRule.Period
                 };
-                var rateLimitingValidationResponse = await _rateLimitingValidator.ValidateContext(rateLimitingValidationContext);
+                var rateLimitingValidationResponse = await _rateLimitingValidationStrategy.ValidateContext(rateLimitingValidationContext);
                 rateLimitingValidationResponses.Add(rateLimitingValidationResponse);
             }
 

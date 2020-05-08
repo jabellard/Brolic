@@ -8,7 +8,8 @@ namespace Brolic.Features.RateLimiting
     {
         public Task<string> IdentifyTrafficInitiator(ITrafficContext trafficContext)
         {
-            throw new System.NotImplementedException();
+            var ipAddress = trafficContext.HttpContext.Connection.RemoteIpAddress.ToString();
+            return Task.FromResult(ipAddress);
         }
     }
 }

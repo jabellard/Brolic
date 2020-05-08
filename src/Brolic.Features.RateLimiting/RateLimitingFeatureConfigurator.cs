@@ -13,11 +13,27 @@ namespace Brolic.Features.RateLimiting
         {
             BrolicServiceConfigurator = brolicServiceConfigurator;
         }
-
-        RateLimitingFeatureConfigurator WithRateLimitingValidator<TRateLimitingValidator>(ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TRateLimitingValidator: IRateLimitingValidator
+        
+        RateLimitingFeatureConfigurator WithCounterKeyBuilder<TRateLimitingCounterKeyBuilder>(ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
+            where TRateLimitingCounterKeyBuilder: IRateLimitingCounterKeyBuilder
         {
-            var serviceDescriptor = new ServiceDescriptor(typeof(IRateLimitingValidator), typeof(TRateLimitingValidator), serviceLifetime);
+            var serviceDescriptor = new ServiceDescriptor(typeof(IRateLimitingCounterKeyBuilder), typeof(TRateLimitingCounterKeyBuilder), serviceLifetime);
+            Services.Add(serviceDescriptor);
+            return this;
+        }
+        
+        RateLimitingFeatureConfigurator WithCounterStore<TRateLimitingCounterStore>(ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
+            where TRateLimitingCounterStore: IRateLimitingCounterStore
+        {
+            var serviceDescriptor = new ServiceDescriptor(typeof(IRateLimitingCounterStore), typeof(TRateLimitingCounterStore), serviceLifetime);
+            Services.Add(serviceDescriptor);
+            return this;
+        }
+
+        RateLimitingFeatureConfigurator WithValidationStrategy<TRateLimitingValidationStrategy>(ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
+            where TRateLimitingValidationStrategy: IRateLimitingValidationStrategy
+        {
+            var serviceDescriptor = new ServiceDescriptor(typeof(IRateLimitingValidationStrategy), typeof(TRateLimitingValidationStrategy), serviceLifetime);
             Services.Add(serviceDescriptor);
             return this;
         }
