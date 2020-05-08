@@ -9,5 +9,6 @@ namespace Brolic.Abstractions
         public bool CatchAll { get; set; }
         public List<string> Methods { get; set; }
         public string Downstream { get; set; }
+        public Dictionary<string, object> Data { get; set; }
     }
 }
