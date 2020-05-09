@@ -11,6 +11,7 @@ namespace Brolic.Features.RateLimiting
         public void ConfigureServices(IServiceCollection services)
         {
             services.TryAddSingleton<IRateLimitingCounterKeyBuilder, Sha1RateLimitingCounterKeyBuilder>();
+            services.AddMemoryCache();
             services.TryAddSingleton<IRateLimitingCounterStore, MemoryCacheRateLimitingCounterStore>();
             services.TryAddSingleton<IRateLimitingValidationStrategy, TokenBucketRateLimitingValidationStrategy>();
             services.TryAddSingleton<ITrafficInitiatorIdentifier, IpTrafficInitiatorIdentifier>();
